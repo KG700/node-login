@@ -1,4 +1,5 @@
 import express from 'express';
+import { pool } from './dbConfig';
 
 const app = express();
 
