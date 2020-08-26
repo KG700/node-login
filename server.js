@@ -1,5 +1,6 @@
 import express from 'express';
 import { pool } from './dbConfig.js';
+import bcrypt from 'bcrypt';
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.get('/users/dashboard', (req, res) => {
     res.render("dashboard", { user: "Sophie" });
 })
 
-app.post('/users/register', (req, res) => {
+app.post('/users/register', async (req, res) => {
     let { name, email, password, password2 } = req.body;
     console.log({
         name,
@@ -49,6 +50,25 @@ app.post('/users/register', (req, res) => {
 
     if (errors.length > 0) {
         res.render('register', { errors })
+    } else {
+        let hashedPassword = await bcrypt.hash(password, 10);
+        console.log(hashedPassword);
+
+        pool.query(
+            `SELECT * FROM users
+            WHERE email = $1`, [email], (err, results) => {
+                if (err) {
+                    throw err
+                } else {
+                    console.log(results.rows)
+                    
+                    if (results.rows.length > 0) {
+                        errors.push({ message: 'Email already registered' });
+                        res.render('register', { errors })
+                    }
+                }
+            }
+        )
     }
 })
 
