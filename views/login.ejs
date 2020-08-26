@@ -14,6 +14,12 @@
         <% } %>
     </ul>
 
+    <ul>
+        <% if(messages.error) { %>
+            <li><%= messages.error %></li>
+        <% } %>
+    </ul>
+
     <form action='/users/login' method="POST">
         <div>
             <input type="email" id="email" name="email" placeholder="Email" />

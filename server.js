@@ -3,6 +3,11 @@ import { pool } from './dbConfig.js';
 import bcrypt from 'bcrypt';
 import session from 'express-session';
 import flash from 'express-flash';
+import passport from 'passport';
+
+import initializePassport from './passportConfig.js';
+
+initializePassport(passport);
 
 const app = express();
 
@@ -15,6 +20,8 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(flash())
 
 app.get('/', (req, res) => {
@@ -92,6 +99,12 @@ app.post('/users/register', async (req, res) => {
         )
     }
 })
+
+app.post("/users/login", passport.authenticate('local', {
+    successRedirect: '/users/dashboard',
+    failureRedirect: '/users/login',
+    failureFlash: true
+}))
 
 app.listen(PORT, () => {
     console.log("Server running on port" + PORT)
