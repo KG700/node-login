@@ -13,7 +13,7 @@ const authenticateUser = (email, password, done) => {
             } 
             console.log(results.rows)
 
-            if (results.rows > 0) {
+            if (results.rows.length > 0) {
                 const user = results.rows[0]
                 bcrypt.compare(password, user.password, (err, isMatch) => {
                     if (err) {
